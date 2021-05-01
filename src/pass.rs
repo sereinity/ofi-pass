@@ -15,7 +15,7 @@ impl<'a> PassDir {
             .min_depth(1)
             .into_iter()
             .filter_entry(|x| !is_hidden(x))
-            .filter_map(move |x| clean_name(x.as_ref().unwrap(), &self.root))
+            .filter_map(move |x| clean_name(x.unwrap(), &self.root))
     }
 }
 
@@ -27,7 +27,7 @@ fn is_hidden(entry: &DirEntry) -> bool {
         .unwrap_or(false)
 }
 
-fn clean_name(entry: &DirEntry, prefix: &PathBuf) -> Option<String> {
+fn clean_name(entry: DirEntry, prefix: &PathBuf) -> Option<String> {
     entry
         .path()
         .strip_prefix(prefix)
