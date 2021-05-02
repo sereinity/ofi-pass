@@ -3,12 +3,13 @@ use directories::BaseDirs;
 
 mod pass;
 mod wofi;
+mod wtype;
 
 fn main() {
     if let Some(secret) = select_secret() {
         let action = select_action(&secret);
         match action {
-            Action::PrintField(x) => println!("should wtype field {}: {}", x, secret.get(&x)),
+            Action::PrintField(x) => wtype::wtype(secret.get(&x)),
             Action::Autotype => println!("should autotype"),
             _ => {}
         }
