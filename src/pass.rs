@@ -40,16 +40,25 @@ impl PassEntry {
     }
 
     pub fn from_pass(entry_name: &String) -> Self {
-        let entry = Self::new(entry_name.to_string());
+        let mut entry = Self::new(entry_name.to_string());
         let output = Command::new("pass")
             .args(&["show", entry_name])
             .output()
             .expect("fail to exec pass");
         let fullout = String::from_utf8(output.stdout).unwrap();
         let splitted_out = fullout.split('\n');
-        splitted_out.map(|x| x.to_string());
-        // First line: entry.values["pass"] = line
-        // line split(':'), entry.values["line[0]"] = line[1]
+        let mut lines = splitted_out.map(|x| x.to_string());
+        entry
+            .values
+            .insert("pass".to_string(), lines.next().unwrap());
+        for extra in lines {
+            match extra.split_once(':') {
+                Some((label, value)) => entry
+                    .values
+                    .insert(label.to_string(), value.trim_start().to_string()),
+                None => continue,
+            };
+        }
         entry
     }
 }
