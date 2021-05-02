@@ -5,10 +5,23 @@ mod pass;
 mod wofi;
 
 fn main() {
-    println!(
-        "{:?}",
-        select_secret().expect("Failed to query the desired secret")
-    );
+    let secret = select_secret().expect("Failed to query the desired secret");
+    println!("Secret {:?}", secret);
+    let action = select_action(secret);
+    println!("Action {:?}", action);
+}
+
+fn select_action(entry: pass::PassEntry) -> Action {
+    let fields = entry.list_fields();
+    let selection = wofi::select(fields);
+    match selection {
+        Some(x) => match Some(x.as_str()) {
+            Some("autotype") => Action::Autotype,
+            Some(_) => Action::PrintField(x),
+            _ => Action::Nothing,
+        },
+        _ => Action::Nothing,
+    }
 }
 
 fn select_secret() -> Option<pass::PassEntry> {
@@ -18,4 +31,11 @@ fn select_secret() -> Option<pass::PassEntry> {
     // println!("PASSWORD_STORE_DIR: {}", store_dir.to_str()?);
     let store_dir = pass::PassDir::new(store_dir);
     wofi::select(store_dir.into_iter()).and_then(|x| Some(store_dir.show(&x)))
+}
+
+#[derive(Debug)]
+enum Action {
+    Autotype,
+    PrintField(String),
+    Nothing,
 }
