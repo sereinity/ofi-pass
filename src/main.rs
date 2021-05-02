@@ -5,10 +5,11 @@ mod pass;
 mod wofi;
 
 fn main() {
-    let secret = select_secret().expect("Failed to query the desired secret");
-    println!("Secret {:?}", secret);
-    let action = select_action(secret);
-    println!("Action {:?}", action);
+    if let Some(secret) = select_secret() {
+        println!("Secret {:?}", secret);
+        let action = select_action(secret);
+        println!("Action {:?}", action);
+    }
 }
 
 fn select_action(entry: pass::PassEntry) -> Action {
