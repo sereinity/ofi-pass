@@ -23,4 +23,5 @@ where
     String::from_utf8(output.stdout)
         .ok()
         .and_then(|x| Some(x.trim().into()))
+        .filter(|x: &String| !x.is_empty())
 }
