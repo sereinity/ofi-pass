@@ -61,6 +61,12 @@ impl PassEntry {
         }
         entry
     }
+
+    pub fn list_fields(&self) -> impl Iterator<Item = &String> {
+        let mut keys = self.values.keys().collect::<Vec<&String>>();
+        keys.sort_by(autotype_alpha);
+        keys.into_iter()
+    }
 }
 
 fn is_hidden(entry: &DirEntry) -> bool {
@@ -81,5 +87,15 @@ fn clean_name(entry: Option<DirEntry>, prefix: &PathBuf) -> Option<String> {
             .and_then(|y| y.strip_suffix(".gpg"))
             .and_then(|y| Some(y.to_string())),
         _ => None,
+    }
+}
+
+fn autotype_alpha(first: &&String, second: &&String) -> std::cmp::Ordering {
+    match (Some(&*first.to_string()), Some(&*second.to_string())) {
+        (Some("autotype"), Some("autotype")) => std::cmp::Ordering::Equal,
+        (Some("autotype"), Some(_)) => std::cmp::Ordering::Greater,
+        (Some(_), Some("autotype")) => std::cmp::Ordering::Less,
+        (Some(x), Some(y)) => x.cmp(y),
+        (_, _) => std::cmp::Ordering::Equal,
     }
 }
