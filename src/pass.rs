@@ -1,4 +1,6 @@
+use std::collections::HashMap;
 use std::path::PathBuf;
+use std::process::Command;
 use walkdir::{DirEntry, WalkDir};
 
 pub struct PassDir {
@@ -16,6 +18,39 @@ impl<'a> PassDir {
             .into_iter()
             .filter_entry(|x| !is_hidden(x))
             .filter_map(move |x| clean_name(x.ok(), &self.root))
+    }
+
+    pub fn show(self, entry: &String) -> PassEntry {
+        PassEntry::from_pass(entry)
+    }
+}
+
+#[derive(Debug)]
+pub struct PassEntry {
+    name: String,
+    values: HashMap<String, String>,
+}
+
+impl PassEntry {
+    fn new(name: String) -> Self {
+        PassEntry {
+            name,
+            values: HashMap::new(),
+        }
+    }
+
+    pub fn from_pass(entry_name: &String) -> Self {
+        let entry = Self::new(entry_name.to_string());
+        let output = Command::new("pass")
+            .args(&["show", entry_name])
+            .output()
+            .expect("fail to exec pass");
+        let fullout = String::from_utf8(output.stdout).unwrap();
+        let splitted_out = fullout.split('\n');
+        splitted_out.map(|x| x.to_string());
+        // First line: entry.values["pass"] = line
+        // line split(':'), entry.values["line[0]"] = line[1]
+        entry
     }
 }
 
