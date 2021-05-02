@@ -6,13 +6,16 @@ mod wofi;
 
 fn main() {
     if let Some(secret) = select_secret() {
-        println!("Secret {:?}", secret);
-        let action = select_action(secret);
-        println!("Action {:?}", action);
+        let action = select_action(&secret);
+        match action {
+            Action::PrintField(x) => println!("should wtype field {}: {}", x, secret.get(&x)),
+            Action::Autotype => println!("should autotype"),
+            _ => {}
+        }
     }
 }
 
-fn select_action(entry: pass::PassEntry) -> Action {
+fn select_action(entry: &pass::PassEntry) -> Action {
     let fields = entry.list_fields();
     let selection = wofi::select(fields);
     match selection {

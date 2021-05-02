@@ -67,6 +67,12 @@ impl PassEntry {
         keys.sort_by(autotype_alpha);
         keys.into_iter()
     }
+
+    pub fn get<T: AsRef<str>>(&self, field_name: T) -> &String {
+        self.values
+            .get(field_name.as_ref())
+            .expect("Getting a value absent of the entry")
+    }
 }
 
 fn is_hidden(entry: &DirEntry) -> bool {
