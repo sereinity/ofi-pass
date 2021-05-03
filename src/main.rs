@@ -12,12 +12,7 @@ fn main() {
         match action {
             Action::PrintField(x) => wtype::wtype(secret.get(&x)),
             Action::Autotype => {
-                let autovec = vec![
-                    pass::EType::Field("user".to_string()),
-                    pass::EType::Tab,
-                    pass::EType::Field("pass".to_string()),
-                ];
-                for autoentry in autovec {
+                for autoentry in secret.autoseq() {
                     match autoentry {
                         pass::EType::Field(x) => wtype::wtype(secret.get(&x)),
                         pass::EType::Tab => {

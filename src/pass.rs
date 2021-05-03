@@ -81,6 +81,14 @@ impl PassEntry {
     pub fn get_name(&self) -> &String {
         &self.name
     }
+
+    pub fn autoseq(&self) -> Vec<EType> {
+        vec![
+            EType::Field("user".to_string()),
+            EType::Tab,
+            EType::Field("pass".to_string()),
+        ]
+    }
 }
 
 fn is_hidden(entry: &DirEntry) -> bool {
