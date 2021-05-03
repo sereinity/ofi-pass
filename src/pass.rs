@@ -83,11 +83,20 @@ impl PassEntry {
     }
 
     pub fn autoseq(&self) -> Vec<EType> {
-        vec![
-            EType::Field("user".to_string()),
-            EType::Tab,
-            EType::Field("pass".to_string()),
-        ]
+        let mut seq = vec![];
+        for word in self.get("autotype".to_string()).split_whitespace() {
+            seq.push(match Some(word) {
+                Some(":tab") => EType::Tab,
+                Some(":enter") => EType::Enter,
+                Some(":space") => EType::Space,
+                Some(":delay") => EType::Delay,
+                Some(":otp") => EType::Otp,
+                Some("path") => EType::Path,
+                Some(x) => EType::Field(x.to_string()),
+                None => panic!("Impossible case"),
+            });
+        }
+        seq
     }
 }
 
