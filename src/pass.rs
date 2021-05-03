@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::env::var;
 use std::path::PathBuf;
 use std::process::Command;
 use walkdir::{DirEntry, WalkDir};
@@ -35,6 +36,10 @@ impl PassEntry {
     fn new(name: String) -> Self {
         let mut values = HashMap::new();
         values.insert("autotype".to_string(), "user :tab pass".to_string());
+        values.insert(
+            "user".to_string(),
+            var("USER").expect("Couldn't get OS username"),
+        );
         PassEntry { name, values }
     }
 
