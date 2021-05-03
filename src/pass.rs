@@ -26,7 +26,6 @@ impl<'a> PassDir {
     }
 }
 
-#[derive(Debug)]
 pub struct PassEntry {
     name: String,
     values: HashMap<String, String>,

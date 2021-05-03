@@ -54,7 +54,6 @@ fn select_secret() -> Option<pass::PassEntry> {
     wofi::select(store_dir.into_iter()).and_then(|x| Some(store_dir.show(&x)))
 }
 
-#[derive(Debug)]
 enum Action {
     Autotype,
     PrintField(String),
