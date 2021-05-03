@@ -77,6 +77,10 @@ impl PassEntry {
             .get(field_name.as_ref())
             .expect("Getting a value absent of the entry")
     }
+
+    pub fn get_name(&self) -> &String {
+        &self.name
+    }
 }
 
 fn is_hidden(entry: &DirEntry) -> bool {

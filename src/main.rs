@@ -25,7 +25,10 @@ fn main() {
                             thread::sleep(time::Duration::from_millis(12));
                         }
                         pass::EType::Enter => wtype::wtype_key("return"),
-                        _ => todo!(),
+                        pass::EType::Space => wtype::wtype_key("space"),
+                        pass::EType::Path => wtype::wtype(secret.get_name()),
+                        pass::EType::Delay => thread::sleep(time::Duration::from_millis(200)),
+                        pass::EType::Otp => todo!(),
                     }
                 }
             }
