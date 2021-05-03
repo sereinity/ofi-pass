@@ -1,5 +1,6 @@
 extern crate directories;
 use directories::BaseDirs;
+use std::{thread, time};
 
 mod pass;
 mod wofi;
@@ -10,7 +11,24 @@ fn main() {
         let action = select_action(&secret);
         match action {
             Action::PrintField(x) => wtype::wtype(secret.get(&x)),
-            Action::Autotype => println!("should autotype"),
+            Action::Autotype => {
+                let autovec = vec![
+                    pass::EType::Field("user".to_string()),
+                    pass::EType::Tab,
+                    pass::EType::Field("pass".to_string()),
+                ];
+                for autoentry in autovec {
+                    match autoentry {
+                        pass::EType::Field(x) => wtype::wtype(secret.get(&x)),
+                        pass::EType::Tab => {
+                            wtype::wtype_key("tab");
+                            thread::sleep(time::Duration::from_millis(12));
+                        }
+                        pass::EType::Enter => wtype::wtype_key("return"),
+                        _ => todo!(),
+                    }
+                }
+            }
             _ => {}
         }
     }

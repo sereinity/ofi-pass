@@ -99,3 +99,13 @@ fn clean_name(entry: Option<DirEntry>, prefix: &PathBuf) -> Option<String> {
         _ => None,
     }
 }
+
+pub enum EType {
+    Field(String),
+    Tab,
+    Space,
+    Delay,
+    Enter,
+    Otp,
+    Path,
+}
