@@ -21,7 +21,7 @@ impl<'a> PassDir {
             .filter_map(move |x| clean_name(x.ok(), &self.root))
     }
 
-    pub fn show(self, entry: &String) -> PassEntry {
+    pub fn show(self, entry: &String) -> Option<PassEntry> {
         PassEntry::from_pass(entry)
     }
 }
@@ -42,7 +42,7 @@ impl PassEntry {
         PassEntry { name, values }
     }
 
-    pub fn from_pass(entry_name: &String) -> Self {
+    pub fn from_pass(entry_name: &String) -> Option<Self> {
         let mut entry = Self::new(entry_name.to_string());
         let output = Command::new("pass")
             .args(&["show", entry_name])
@@ -62,7 +62,7 @@ impl PassEntry {
                 None => continue,
             };
         }
-        entry
+        Some(entry)
     }
 
     pub fn list_fields(&self) -> impl Iterator<Item = &String> {

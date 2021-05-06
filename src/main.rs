@@ -51,7 +51,7 @@ fn select_secret() -> Option<pass::PassEntry> {
     let store_dir = dir_str.home_dir().join(".password-store");
     // println!("PASSWORD_STORE_DIR: {}", store_dir.to_str()?);
     let store_dir = pass::PassDir::new(store_dir);
-    wofi::select(store_dir.into_iter()).and_then(|x| Some(store_dir.show(&x)))
+    wofi::select(store_dir.into_iter()).and_then(|x| store_dir.show(&x))
 }
 
 enum Action {
