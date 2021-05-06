@@ -48,6 +48,9 @@ impl PassEntry {
             .args(&["show", entry_name])
             .output()
             .expect("fail to exec pass");
+        if !output.status.success() {
+            return None;
+        }
         let fullout = String::from_utf8(output.stdout).unwrap();
         let splitted_out = fullout.split('\n');
         let mut lines = splitted_out.map(|x| x.to_string());

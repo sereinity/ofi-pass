@@ -24,7 +24,6 @@ Typing engines:
 
 ## TODO
 
-- Handle empty secret in store
 - Select previous selection automatically
 - Handle :otp
 - Add multi-store (seams only possible via rofi to switch between stores)
