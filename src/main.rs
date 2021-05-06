@@ -2,6 +2,7 @@ extern crate directories;
 use directories::BaseDirs;
 use std::{thread, time};
 
+mod conf;
 mod pass;
 mod wofi;
 mod wtype;
@@ -51,7 +52,10 @@ fn select_secret() -> Option<pass::PassEntry> {
     let store_dir = dir_str.home_dir().join(".password-store");
     // println!("PASSWORD_STORE_DIR: {}", store_dir.to_str()?);
     let store_dir = pass::PassDir::new(store_dir);
-    wofi::select(store_dir.into_iter()).and_then(|x| store_dir.show(&x))
+    // TODO: retrieve latest entry
+    wofi::select(store_dir.into_iter())
+        .and_then(|x| store_dir.show(&x))
+        .and_then(|x| conf::save(x.get_name()).ok().and(Some(x)))
 }
 
 enum Action {
