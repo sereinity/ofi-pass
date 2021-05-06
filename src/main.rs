@@ -35,7 +35,7 @@ fn main() {
 
 fn select_action(entry: &pass::PassEntry) -> Action {
     let fields = entry.list_fields();
-    let selection = wofi::select(fields);
+    let selection = wofi::select(fields, None);
     match selection {
         Some(x) => match Some(x.as_str()) {
             Some("autotype") => Action::Autotype,
@@ -52,8 +52,7 @@ fn select_secret() -> Option<pass::PassEntry> {
     let store_dir = dir_str.home_dir().join(".password-store");
     // println!("PASSWORD_STORE_DIR: {}", store_dir.to_str()?);
     let store_dir = pass::PassDir::new(store_dir);
-    // TODO: retrieve latest entry
-    wofi::select(store_dir.into_iter())
+    wofi::select(store_dir.into_iter(), conf::load())
         .and_then(|x| store_dir.show(&x))
         .and_then(|x| conf::save(x.get_name()).ok().and(Some(x)))
 }

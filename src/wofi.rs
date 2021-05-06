@@ -1,13 +1,17 @@
 use std::io::Write;
 use std::process::{Command, Stdio};
 
-pub fn select<I, T>(input: I) -> Option<String>
+pub fn select<I, T>(input: I, default: Option<T>) -> Option<String>
 where
     I: IntoIterator<Item = T>,
     T: AsRef<str>,
 {
-    let child = Command::new("wofi")
-        .args(&["--dmenu"])
+    let mut cmd = Command::new("wofi");
+    cmd.args(&["--dmenu"]);
+    if let Some(entry) = default {
+        cmd.args(&["--search", entry.as_ref()]);
+    }
+    let child = cmd
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .spawn()
