@@ -53,20 +53,7 @@ impl PassEntry {
             return None;
         }
         let fullout = String::from_utf8(output.stdout).unwrap();
-        let splitted_out = fullout.split('\n');
-        let mut lines = splitted_out.map(|x| x.to_string());
-        entry
-            .values
-            .insert("pass".to_string(), lines.next().unwrap());
-        for extra in lines {
-            match extra.split_once(": ") {
-                Some((label, value)) => entry.values.insert(label.to_string(), value.to_string()),
-                None => {
-                    info!("Parsing a non splittable line '{}'", extra);
-                    continue;
-                }
-            };
-        }
+        parse_entry_string(fullout, &mut entry);
         Some(entry)
     }
 
@@ -112,6 +99,26 @@ fn is_hidden(entry: &DirEntry) -> bool {
         .unwrap_or(false)
 }
 
+fn parse_entry_string<T>(content: T, entry: &mut PassEntry)
+where
+    T: AsRef<str>,
+{
+    let splitted_out = content.as_ref().split('\n');
+    let mut lines = splitted_out.map(|x| x.to_string());
+    entry
+        .values
+        .insert("pass".to_string(), lines.next().unwrap());
+    for extra in lines {
+        match extra.split_once(": ") {
+            Some((label, value)) => entry.values.insert(label.to_string(), value.to_string()),
+            None => {
+                info!("Parsing a non splittable line '{}'", extra);
+                continue;
+            }
+        };
+    }
+}
+
 fn clean_name(entry: Option<DirEntry>, prefix: &PathBuf) -> Option<String> {
     match entry {
         Some(x) => x
@@ -133,4 +140,60 @@ pub enum EType {
     Enter,
     Otp,
     Path,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn empty() {
+        let mut entry = PassEntry::new("My entry".to_string());
+        parse_entry_string("", &mut entry);
+        assert_eq!(entry.name, "My entry");
+        assert_eq!(entry.values.keys().len(), 3);
+        assert_eq!(entry.values["autotype"], "user :tab pass");
+        assert_eq!(entry.values["pass"], "");
+        assert_ne!(entry.values["user"], "");
+    }
+
+    #[test]
+    fn only_pass() {
+        let mut entry = PassEntry::new("My entry".to_string());
+        parse_entry_string("my: password", &mut entry);
+        assert_eq!(entry.values.keys().len(), 3);
+        assert_eq!(entry.values["pass"], "my: password");
+    }
+
+    #[test]
+    fn with_extra_newline() {
+        let mut entry = PassEntry::new("My entry".to_string());
+        parse_entry_string(
+            "my: password\n\
+            user: foo\n\n\n\
+            custom: bar",
+            &mut entry,
+        );
+        assert_eq!(entry.values.keys().len(), 4);
+        assert_eq!(entry.values["pass"], "my: password");
+        assert_eq!(entry.values["user"], "foo");
+        assert_eq!(entry.values["custom"], "bar");
+    }
+
+    #[test]
+    fn full_file() {
+        let mut entry = PassEntry::new("My entry".to_string());
+        parse_entry_string(
+            "my: password\n\
+            autotype: user :enter pass\n\
+            user: foo\n\
+            custom: bar",
+            &mut entry,
+        );
+        assert_eq!(entry.values.keys().len(), 4);
+        assert_eq!(entry.values["autotype"], "user :enter pass");
+        assert_eq!(entry.values["pass"], "my: password");
+        assert_eq!(entry.values["user"], "foo");
+        assert_eq!(entry.values["custom"], "bar");
+    }
 }
