@@ -59,10 +59,8 @@ impl PassEntry {
             .values
             .insert("pass".to_string(), lines.next().unwrap());
         for extra in lines {
-            match extra.split_once(':') {
-                Some((label, value)) => entry
-                    .values
-                    .insert(label.to_string(), value.trim_start().to_string()),
+            match extra.split_once(": ") {
+                Some((label, value)) => entry.values.insert(label.to_string(), value.to_string()),
                 None => {
                     info!("Parsing a non splittable line '{}'", extra);
                     continue;
