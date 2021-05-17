@@ -212,4 +212,19 @@ mod tests {
         assert_eq!(entry.values["pass"], "my: password\n");
         assert_eq!(entry.values["user"], "foo");
     }
+
+    #[test]
+    #[ignore = "not yet implemented"]
+    fn follow_file() {
+        let mut entry = PassEntry::new("My entry".to_string());
+        parse_entry_string(
+            "#FILE=my_file\n\
+            user: foo",
+            &mut entry,
+        );
+        assert_eq!(entry.values.keys().len(), 3);
+        assert_eq!(entry.values["pass"], "#FILE=my_file");
+        assert_eq!(entry.values["user"], "foo");
+        todo!("test entry.pass() would load the file");
+    }
 }

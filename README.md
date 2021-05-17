@@ -30,6 +30,7 @@ Typing engines:
 - Implement perfect merge of xdotool and wtype?
 - Log if fail to parse password entry
 - Handle multi-line password
+- `#FILE=` an entryname to `pass show`
 
 
 ## OTP spec
