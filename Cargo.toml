@@ -6,3 +6,4 @@ edition = "2018"
 [dependencies]
 directories = "3.0"
 walkdir = "2"
+log = "0.4"

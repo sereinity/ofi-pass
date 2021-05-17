@@ -1,8 +1,8 @@
 use std::process::Command;
 
-pub fn wtype(text: &String) {
+pub fn wtype<S: AsRef<str>>(text: S) {
     Command::new("wtype")
-        .args(&[text])
+        .args(&[text.as_ref()])
         .spawn()
         .expect("Failed to call wtype");
 }

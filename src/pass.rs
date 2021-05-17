@@ -1,3 +1,4 @@
+use log::info;
 use std::collections::HashMap;
 use std::env::var;
 use std::path::PathBuf;
@@ -62,7 +63,10 @@ impl PassEntry {
                 Some((label, value)) => entry
                     .values
                     .insert(label.to_string(), value.trim_start().to_string()),
-                None => continue,
+                None => {
+                    info!("Parsing a non splittable line '{}'", extra);
+                    continue;
+                }
             };
         }
         Some(entry)
