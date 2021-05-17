@@ -25,12 +25,11 @@ Typing engines:
 ## TODOs
 
 - Handle :otp
+- Handle multi-line password
+- Handle `#FILE=` an entryname to `pass show`
 - Add multi-store (seams only possible via rofi to switch between stores)
 - Find which typing tool to use? (sway only at first)
 - Implement perfect merge of xdotool and wtype?
-- Log if fail to parse password entry
-- Handle multi-line password
-- `#FILE=` an entryname to `pass show`
 
 
 ## OTP spec
