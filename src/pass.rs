@@ -196,4 +196,20 @@ mod tests {
         assert_eq!(entry.values["user"], "foo");
         assert_eq!(entry.values["custom"], "bar");
     }
+
+    #[test]
+    #[ignore = "not yet implemented"]
+    fn multiline() {
+        let mut entry = PassEntry::new("My entry".to_string());
+        parse_entry_string(
+            "my: password\n\
+            \n\
+            ---\n\
+            user: foo",
+            &mut entry,
+        );
+        assert_eq!(entry.values.keys().len(), 3);
+        assert_eq!(entry.values["pass"], "my: password\n");
+        assert_eq!(entry.values["user"], "foo");
+    }
 }
