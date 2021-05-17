@@ -227,4 +227,27 @@ mod tests {
         assert_eq!(entry.values["user"], "foo");
         todo!("test entry.pass() would load the file");
     }
+
+    #[test]
+    #[ignore = "not yet implemented"]
+    fn otp_command() {
+        let mut entry = PassEntry::new("My entry".to_string());
+        parse_entry_string(
+            "otpauth://my_url\n\
+            otp_method: my command",
+            &mut entry,
+        );
+        assert_eq!(entry.values.keys().len(), 4);
+        todo!("test entry.pass() will execute 'my command'");
+    }
+
+    #[test]
+    #[ignore = "not yet implemented"]
+    fn pass_otp() {
+        let mut entry = PassEntry::new("My entry".to_string());
+        parse_entry_string("otpauth://my_url", &mut entry);
+        assert_eq!(entry.values.keys().len(), 3);
+        assert_eq!(entry.values["pass"], "otpauth://my_url");
+        todo!("test entry.pass() will execute 'pass otp $entry_name'");
+    }
 }

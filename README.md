@@ -36,4 +36,4 @@ Typing engines:
 ## OTP spec
 
 A magic field `otp_method` defines a command line to run, ofi should type the result.
-There is also something about otpauth://*
+If no `otp_method` but the password starts with `otpauth://` it should call `pass-otp`
