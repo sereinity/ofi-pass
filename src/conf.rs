@@ -2,24 +2,34 @@ use directories::ProjectDirs;
 use std::fs::{self, File};
 use std::io::prelude::*;
 
-pub fn load() -> Option<String> {
-    if let Some(prdir) = ProjectDirs::from("org", "sereinity", "ofi-pass") {
-        let rfile = File::open(prdir.data_dir().join("latest"));
-        if let Ok(mut file) = rfile {
-            let mut content = String::new();
-            return file.read_to_string(&mut content).ok().and(Some(content));
-        }
-    }
-    None
+pub struct Config {
+    prdir: ProjectDirs,
 }
 
-pub fn save<S: AsRef<str>>(entry: S) -> std::io::Result<()> {
-    if let Some(prdir) = ProjectDirs::from("org", "sereinity", "ofi-pass") {
-        if !prdir.data_dir().is_dir() {
-            fs::create_dir_all(prdir.data_dir())?;
+impl Config {
+    pub fn new() -> Config {
+        Config {
+            prdir: ProjectDirs::from("org", "sereinity", "ofi-pass")
+                .expect("Can't guess config pass"),
         }
-        let mut file = File::create(prdir.data_dir().join("latest"))?;
-        file.write(entry.as_ref().as_bytes())?;
     }
-    Ok(())
+
+    pub fn load(&self) -> Option<String> {
+        let rfile = File::open(self.prdir.data_dir().join("latest"));
+        if let Ok(mut file) = rfile {
+            let mut content = String::new();
+            file.read_to_string(&mut content).ok().and(Some(content))
+        } else {
+            None
+        }
+    }
+
+    pub fn save<S: AsRef<str>>(&self, entry: S) -> std::io::Result<()> {
+        if !self.prdir.data_dir().is_dir() {
+            fs::create_dir_all(self.prdir.data_dir())?;
+        }
+        let mut file = File::create(self.prdir.data_dir().join("latest"))?;
+        file.write(entry.as_ref().as_bytes())?;
+        Ok(())
+    }
 }
