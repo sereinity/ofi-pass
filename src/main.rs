@@ -1,5 +1,4 @@
 extern crate directories;
-use directories::BaseDirs;
 use std::{thread, time};
 
 mod conf;
@@ -48,15 +47,11 @@ fn select_action(config: &conf::Config, entry: &pass::PassEntry) -> Action {
 }
 
 fn select_secret(config: &conf::Config) -> Option<pass::PassEntry> {
-    // List alternative roots and use via PASSWORD_STORE_DIR
-    let dir_str = BaseDirs::new().expect("Can't determine directory structure");
-    let store_dir = dir_str.home_dir().join(".password-store");
-    // println!("PASSWORD_STORE_DIR: {}", store_dir.to_str()?);
-    let store_dir = pass::PassDir::new(store_dir);
+    let pass_store = pass::PassDir::new(config.get_path().clone());
     config
         .ofi_tool
-        .select(store_dir.into_iter(), config.load())
-        .and_then(|x| store_dir.show(&x))
+        .select(pass_store.into_iter(), config.load())
+        .and_then(|x| pass_store.show(&x))
         .and_then(|x| config.save(x.get_name()).ok().and(Some(x)))
 }
 

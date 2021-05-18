@@ -1,15 +1,18 @@
-use directories::ProjectDirs;
+use directories::{BaseDirs, ProjectDirs};
 use std::env::var;
 use std::fs::{self, File};
 use std::io::prelude::*;
+use std::path::PathBuf;
 
 pub struct Config {
     prdir: ProjectDirs,
     pub ofi_tool: OfiTool,
+    store_dirs: Vec<PathBuf>,
 }
 
 impl Config {
     pub fn new() -> Config {
+        let dir_str = BaseDirs::new().expect("Can't determine directory structure");
         Config {
             prdir: ProjectDirs::from("org", "sereinity", "ofi-pass")
                 .expect("Can't guess config pass"),
@@ -17,7 +20,16 @@ impl Config {
                 Ok(x) if x.eq("wofi") => OfiTool::Wofi,
                 _ => OfiTool::Rofi,
             },
+            // List alternative roots and use via PASSWORD_STORE_DIR
+            store_dirs: vec![dir_str.home_dir().join(".password-store")],
         }
+    }
+
+    pub fn get_path(&self) -> &PathBuf {
+        &self
+            .store_dirs
+            .first()
+            .expect("Should have a default pass store")
     }
 
     pub fn load(&self) -> Option<String> {
