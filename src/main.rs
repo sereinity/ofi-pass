@@ -10,7 +10,7 @@ mod wtype;
 fn main() {
     let config = conf::Config::new();
     if let Some(secret) = select_secret(&config) {
-        let action = select_action(&secret);
+        let action = select_action(&config, &secret);
         match action {
             Action::PrintField(x) => wtype::wtype(secret.get(&x)),
             Action::Autotype => {
@@ -34,10 +34,9 @@ fn main() {
     }
 }
 
-fn select_action(entry: &pass::PassEntry) -> Action {
+fn select_action(config: &conf::Config, entry: &pass::PassEntry) -> Action {
     let fields = entry.list_fields();
-    let selection = wofi::select(fields, None);
-    match selection {
+    match config.ofi_tool.select(fields, None) {
         Some(x) => match Some(x.as_str()) {
             Some("autotype") => Action::Autotype,
             Some(_) => Action::PrintField(x),
