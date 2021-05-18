@@ -1,9 +1,11 @@
 use directories::ProjectDirs;
+use std::env::var;
 use std::fs::{self, File};
 use std::io::prelude::*;
 
 pub struct Config {
     prdir: ProjectDirs,
+    pub ofi_tool: OfiTool,
 }
 
 impl Config {
@@ -11,6 +13,9 @@ impl Config {
         Config {
             prdir: ProjectDirs::from("org", "sereinity", "ofi-pass")
                 .expect("Can't guess config pass"),
+            ofi_tool: match var("OFI_TOOL") {
+                _ => OfiTool::Wofi,
+            },
         }
     }
 
@@ -32,4 +37,8 @@ impl Config {
         file.write(entry.as_ref().as_bytes())?;
         Ok(())
     }
+}
+
+pub enum OfiTool {
+    Wofi,
 }
