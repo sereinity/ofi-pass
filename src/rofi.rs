@@ -7,7 +7,7 @@ where
     T: AsRef<str>,
 {
     let mut cmd = Command::new("rofi");
-    cmd.args(&["-dmenu", "-i"]);
+    cmd.args(&["-dmenu", "-i", "-p", ">"]);
     if let Some(entry) = default {
         cmd.args(&["-filter", entry.as_ref()]);
     }
