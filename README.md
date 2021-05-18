@@ -8,8 +8,8 @@ This project is inspired by [rofi-pass](https://github.com/carnager/rofi-pass) a
 ## Engines
 
 Current prompt engines are:
-- wofi (default and only one)
-- rofi (soon as required to have multiple stores)
+- rofi (default, configurable via `OFI_TOOL` variable)
+- wofi
 
 Typing engines:
 - wtype (default, and only one for now)

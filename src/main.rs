@@ -4,6 +4,7 @@ use std::{thread, time};
 
 mod conf;
 mod pass;
+mod rofi;
 mod wofi;
 mod wtype;
 
@@ -67,6 +68,7 @@ impl conf::OfiTool {
     {
         match self {
             conf::OfiTool::Wofi => wofi::select(input, default),
+            conf::OfiTool::Rofi => rofi::select(input, default),
         }
     }
 }

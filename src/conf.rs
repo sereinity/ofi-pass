@@ -14,7 +14,8 @@ impl Config {
             prdir: ProjectDirs::from("org", "sereinity", "ofi-pass")
                 .expect("Can't guess config pass"),
             ofi_tool: match var("OFI_TOOL") {
-                _ => OfiTool::Wofi,
+                Ok(x) if x.eq("wofi") => OfiTool::Wofi,
+                _ => OfiTool::Rofi,
             },
         }
     }
@@ -41,4 +42,5 @@ impl Config {
 
 pub enum OfiTool {
     Wofi,
+    Rofi,
 }
