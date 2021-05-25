@@ -52,7 +52,7 @@ impl PassEntry {
         if !output.status.success() {
             return None;
         }
-        let fullout = String::from_utf8(output.stdout).unwrap();
+        let fullout = std::str::from_utf8(&output.stdout).unwrap();
         parse_entry_string(fullout, &mut entry);
         Some(entry)
     }
@@ -63,9 +63,9 @@ impl PassEntry {
         keys.into_iter()
     }
 
-    pub fn get<T: AsRef<str>>(&self, field_name: T) -> &String {
+    pub fn get(&self, field_name: &str) -> &String {
         self.values
-            .get(field_name.as_ref())
+            .get(field_name)
             .expect("Getting a value absent of the entry")
     }
 
@@ -75,7 +75,7 @@ impl PassEntry {
 
     pub fn autoseq(&self) -> Vec<EType> {
         let mut seq = vec![];
-        for word in self.get("autotype".to_string()).split_whitespace() {
+        for word in self.get("autotype").split_whitespace() {
             seq.push(match Some(word) {
                 Some(":tab") => EType::Tab,
                 Some(":enter") => EType::Enter,
@@ -99,11 +99,8 @@ fn is_hidden(entry: &DirEntry) -> bool {
         .unwrap_or(false)
 }
 
-fn parse_entry_string<T>(content: T, entry: &mut PassEntry)
-where
-    T: AsRef<str>,
-{
-    let splitted_out = content.as_ref().split('\n');
+fn parse_entry_string(content: &str, entry: &mut PassEntry) {
+    let splitted_out = content.split('\n');
     let mut lines = splitted_out.map(|x| x.to_string());
     entry
         .values

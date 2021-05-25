@@ -42,12 +42,12 @@ impl Config {
         }
     }
 
-    pub fn save<S: AsRef<str>>(&self, entry: S) -> std::io::Result<()> {
+    pub fn save(&self, entry: &str) -> std::io::Result<()> {
         if !self.prdir.data_dir().is_dir() {
             fs::create_dir_all(self.prdir.data_dir())?;
         }
         let mut file = File::create(self.latest_path())?;
-        file.write_all(entry.as_ref().as_bytes())?;
+        file.write_all(entry.as_bytes())?;
         Ok(())
     }
 
