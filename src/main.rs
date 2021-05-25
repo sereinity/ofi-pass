@@ -58,7 +58,7 @@ fn select_secret(config: &conf::Config) -> Option<pass::PassEntry> {
 impl conf::OfiTool {
     pub fn select<I, T>(&self, input: I, default: Option<T>) -> Option<String>
     where
-        I: IntoIterator<Item = T>,
+        I: Iterator<Item = T>,
         T: AsRef<str>,
     {
         match self {

@@ -3,7 +3,7 @@ use std::process::{Command, Stdio};
 
 pub fn select<I, T>(input: I, default: Option<T>) -> Option<String>
 where
-    I: IntoIterator<Item = T>,
+    I: Iterator<Item = T>,
     T: AsRef<str>,
 {
     let mut cmd = Command::new("rofi");
