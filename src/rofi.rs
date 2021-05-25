@@ -26,6 +26,6 @@ where
     let output = child.wait_with_output().expect("rofi didn't ended well");
     String::from_utf8(output.stdout)
         .ok()
-        .and_then(|x| Some(x.trim().into()))
+        .map(|x| x.trim().into())
         .filter(|x: &String| !x.is_empty())
 }

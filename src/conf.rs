@@ -47,7 +47,7 @@ impl Config {
             fs::create_dir_all(self.prdir.data_dir())?;
         }
         let mut file = File::create(self.prdir.data_dir().join("latest"))?;
-        file.write(entry.as_ref().as_bytes())?;
+        file.write_all(entry.as_ref().as_bytes())?;
         Ok(())
     }
 }

@@ -1,7 +1,7 @@
 use log::info;
 use std::collections::HashMap;
 use std::env::var;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 use walkdir::{DirEntry, WalkDir};
 
@@ -14,7 +14,7 @@ impl<'a> PassDir {
         PassDir { root }
     }
 
-    pub fn into_iter(self: &'a Self) -> impl Iterator<Item = String> + 'a {
+    pub fn into_iter(&'a self) -> impl Iterator<Item = String> + 'a {
         WalkDir::new(self.root.clone())
             .min_depth(1)
             .into_iter()
@@ -22,7 +22,7 @@ impl<'a> PassDir {
             .filter_map(move |x| clean_name(x.ok(), &self.root))
     }
 
-    pub fn show(self, entry: &String) -> Option<PassEntry> {
+    pub fn show(self, entry: &str) -> Option<PassEntry> {
         PassEntry::from_pass(entry)
     }
 }
@@ -43,7 +43,7 @@ impl PassEntry {
         PassEntry { name, values }
     }
 
-    pub fn from_pass(entry_name: &String) -> Option<Self> {
+    pub fn from_pass(entry_name: &str) -> Option<Self> {
         let mut entry = Self::new(entry_name.to_string());
         let output = Command::new("pass")
             .args(&["show", entry_name])
@@ -95,7 +95,7 @@ fn is_hidden(entry: &DirEntry) -> bool {
     entry
         .file_name()
         .to_str()
-        .map(|s| s.starts_with("."))
+        .map(|s| s.starts_with('.'))
         .unwrap_or(false)
 }
 
@@ -119,7 +119,7 @@ where
     }
 }
 
-fn clean_name(entry: Option<DirEntry>, prefix: &PathBuf) -> Option<String> {
+fn clean_name(entry: Option<DirEntry>, prefix: &Path) -> Option<String> {
     match entry {
         Some(x) => x
             .path()
@@ -127,7 +127,7 @@ fn clean_name(entry: Option<DirEntry>, prefix: &PathBuf) -> Option<String> {
             .ok()
             .and_then(|y| y.to_str())
             .and_then(|y| y.strip_suffix(".gpg"))
-            .and_then(|y| Some(y.to_string())),
+            .map(|y| y.to_string()),
         _ => None,
     }
 }
