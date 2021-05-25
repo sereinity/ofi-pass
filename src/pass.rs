@@ -14,7 +14,7 @@ impl<'a> PassDir {
         PassDir { root }
     }
 
-    pub fn into_iter(&'a self) -> impl Iterator<Item = String> + 'a {
+    pub fn iter(&'a self) -> impl Iterator<Item = String> + 'a {
         WalkDir::new(self.root.clone())
             .min_depth(1)
             .into_iter()

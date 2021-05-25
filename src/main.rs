@@ -50,7 +50,7 @@ fn select_secret(config: &conf::Config) -> Option<pass::PassEntry> {
     let pass_store = pass::PassDir::new(config.get_path().clone());
     config
         .ofi_tool
-        .select(pass_store.into_iter(), config.load())
+        .select(pass_store.iter(), config.load())
         .and_then(|x| pass_store.show(&x))
         .and_then(|x| config.save(x.get_name()).ok().and(Some(x)))
 }
