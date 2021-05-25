@@ -33,7 +33,7 @@ impl Config {
     }
 
     pub fn load(&self) -> Option<String> {
-        let rfile = File::open(self.prdir.data_dir().join("latest"));
+        let rfile = File::open(self.latest_path());
         if let Ok(mut file) = rfile {
             let mut content = String::new();
             file.read_to_string(&mut content).ok().and(Some(content))
@@ -46,9 +46,13 @@ impl Config {
         if !self.prdir.data_dir().is_dir() {
             fs::create_dir_all(self.prdir.data_dir())?;
         }
-        let mut file = File::create(self.prdir.data_dir().join("latest"))?;
+        let mut file = File::create(self.latest_path())?;
         file.write_all(entry.as_ref().as_bytes())?;
         Ok(())
+    }
+
+    fn latest_path(&self) -> PathBuf {
+        self.prdir.data_dir().join("latest")
     }
 }
 
