@@ -29,6 +29,7 @@ Typing engines:
 - Handle `#FILE=` an entryname to `pass show`
 - Add multi-store (seams only possible via rofi to switch between stores)
 - Find which typing tool to use? (sway only at first)
+- Check that rofi/wofi is installed before selecting it
 - Implement perfect merge of xdotool and wtype?
 
 
