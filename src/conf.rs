@@ -32,14 +32,22 @@ impl Config {
     }
 
     pub fn load(&self) -> Option<String> {
-        fs::read_to_string(self.latest_path()).ok()
+        self.read()
     }
 
     pub fn save(&self, entry: &str) -> std::io::Result<()> {
+        self.write(entry)
+    }
+
+    fn read(&self) -> Option<String> {
+        fs::read_to_string(self.latest_path()).ok()
+    }
+
+    fn write(&self, content: &str) -> std::io::Result<()> {
         if !self.prdir.data_dir().is_dir() {
             fs::create_dir_all(self.prdir.data_dir())?;
         }
-        fs::write(self.latest_path(), entry.as_bytes())
+        fs::write(self.latest_path(), content.as_bytes())
     }
 
     fn latest_path(&self) -> PathBuf {
