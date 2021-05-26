@@ -3,13 +3,13 @@ use std::process::Command;
 pub fn wtype(text: &str) {
     Command::new("wtype")
         .args(&[text])
-        .spawn()
+        .status()
         .expect("Failed to call wtype");
 }
 
 pub fn wtype_key(keyname: &str) {
     Command::new("wtype")
         .args(&["-k", keyname])
-        .spawn()
+        .status()
         .expect("Failed to call wtype");
 }
