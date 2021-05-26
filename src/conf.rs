@@ -82,4 +82,14 @@ mod tests {
         let conf = Config::new();
         assert_eq!(None, conf.load());
     }
+
+    #[test]
+    fn save_latest() {
+        Config::write.mock_safe(|_, entry| {
+            assert_eq!("Foo", entry);
+            MockResult::Return(Ok(()))
+        });
+        let conf = Config::new();
+        assert_eq!((), conf.save("Foo").unwrap());
+    }
 }
