@@ -3,12 +3,16 @@ use std::env::var;
 use std::fs;
 use std::path::PathBuf;
 
+#[cfg(test)]
+use mocktopus::macros::mockable;
+
 pub struct Config {
     prdir: ProjectDirs,
     pub ofi_tool: OfiTool,
     store_dirs: Vec<PathBuf>,
 }
 
+#[cfg_attr(test, mockable)]
 impl Config {
     pub fn new() -> Config {
         let dir_str = BaseDirs::new().expect("Can't determine directory structure");
@@ -58,4 +62,24 @@ impl Config {
 pub enum OfiTool {
     Wofi,
     Rofi,
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use mocktopus::mocking::*;
+
+    #[test]
+    fn load_old_latest() {
+        Config::read.mock_safe(|_| MockResult::Return(Some("myentry".to_string())));
+        let conf = Config::new();
+        assert_eq!(Some("myentry".to_string()), conf.load());
+    }
+
+    #[test]
+    fn no_previous_file() {
+        Config::read.mock_safe(|_| MockResult::Return(None));
+        let conf = Config::new();
+        assert_eq!(None, conf.load());
+    }
 }

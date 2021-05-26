@@ -9,4 +9,4 @@ walkdir = "2"
 log = "0.4"
 
 [dev-dependencies]
-mockall = "0.9"
+mocktopus = "0.7.0"
