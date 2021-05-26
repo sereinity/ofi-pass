@@ -1,7 +1,6 @@
 use directories::{BaseDirs, ProjectDirs};
 use std::env::var;
-use std::fs::{self, File};
-use std::io::prelude::*;
+use std::fs;
 use std::path::PathBuf;
 
 pub struct Config {
@@ -33,22 +32,14 @@ impl Config {
     }
 
     pub fn load(&self) -> Option<String> {
-        let rfile = File::open(self.latest_path());
-        if let Ok(mut file) = rfile {
-            let mut content = String::new();
-            file.read_to_string(&mut content).ok().and(Some(content))
-        } else {
-            None
-        }
+        fs::read_to_string(self.latest_path()).ok()
     }
 
     pub fn save(&self, entry: &str) -> std::io::Result<()> {
         if !self.prdir.data_dir().is_dir() {
             fs::create_dir_all(self.prdir.data_dir())?;
         }
-        let mut file = File::create(self.latest_path())?;
-        file.write_all(entry.as_bytes())?;
-        Ok(())
+        fs::write(self.latest_path(), entry.as_bytes())
     }
 
     fn latest_path(&self) -> PathBuf {
