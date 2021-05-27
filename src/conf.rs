@@ -36,11 +36,16 @@ impl Config {
     }
 
     pub fn load(&self) -> Option<String> {
-        self.read()
+        if let Some(content) = self.read() {
+            let mut lines = content.split('\n');
+            let entry = lines.next().unwrap().clone().to_string();
+            return Some(entry);
+        }
+        None
     }
 
     pub fn save(&self, entry: &str) -> std::io::Result<()> {
-        self.write(entry)
+        self.write(&format!("{}\n{}", entry, self.get_path().display()))
     }
 
     fn read(&self) -> Option<String> {
@@ -84,12 +89,21 @@ mod tests {
     }
 
     #[test]
+    fn loading_same_store() {
+        Config::read
+            .mock_safe(|_| MockResult::Return(Some("myentry\n/my/.password-store".to_string())));
+        let conf = Config::new();
+        assert_eq!(Some("myentry".to_string()), conf.load());
+    }
+
+    #[test]
     fn save_latest() {
         Config::write.mock_safe(|_, entry| {
-            assert_eq!("Foo", entry);
+            assert_eq!("Foo\n/my/.password-store", entry);
             MockResult::Return(Ok(()))
         });
-        let conf = Config::new();
+        let mut conf = Config::new();
+        conf.store_dirs = vec![PathBuf::from("/my/.password-store")];
         assert_eq!((), conf.save("Foo").unwrap());
     }
 }
