@@ -35,10 +35,13 @@ impl Config {
             .expect("Should have a default pass store")
     }
 
-    pub fn load(&self) -> Option<String> {
+    pub fn load(&mut self) -> Option<String> {
         if let Some(content) = self.read() {
             let mut lines = content.split('\n');
             let entry = lines.next().unwrap().to_string();
+            if let Some(path) = lines.next() {
+                self.rotate_to(path);
+            }
             return Some(entry);
         }
         None
@@ -59,6 +62,12 @@ impl Config {
         fs::write(self.latest_path(), content.as_bytes())
     }
 
+    fn rotate_to(&mut self, store_path: &str) {
+        if let Ok(pos) = self.store_dirs.binary_search(&PathBuf::from(store_path)) {
+            self.store_dirs.rotate_left(pos);
+        }
+    }
+
     fn latest_path(&self) -> PathBuf {
         self.prdir.data_dir().join("latest")
     }
@@ -77,22 +86,30 @@ mod tests {
     #[test]
     fn load_old_latest() {
         Config::read.mock_safe(|_| MockResult::Return(Some("myentry".to_string())));
-        let conf = Config::new();
+        let mut conf = Config::new();
         assert_eq!(Some("myentry".to_string()), conf.load());
     }
 
     #[test]
     fn no_previous_file() {
         Config::read.mock_safe(|_| MockResult::Return(None));
-        let conf = Config::new();
+        let mut conf = Config::new();
         assert_eq!(None, conf.load());
+    }
+
+    #[test]
+    fn load_latest() {
+        Config::read
+            .mock_safe(|_| MockResult::Return(Some("myentry\n/my/.password-store".to_string())));
+        let mut conf = Config::new();
+        assert_eq!(Some("myentry".to_string()), conf.load());
     }
 
     #[test]
     fn loading_same_store() {
         Config::read
             .mock_safe(|_| MockResult::Return(Some("myentry\n/my/.password-store".to_string())));
-        let conf = Config::new();
+        let mut conf = Config::new();
         assert_eq!(Some("myentry".to_string()), conf.load());
     }
 

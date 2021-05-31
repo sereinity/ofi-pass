@@ -8,8 +8,8 @@ mod wofi;
 mod wtype;
 
 fn main() {
-    let config = conf::Config::new();
-    if let Some(secret) = select_secret(&config) {
+    let mut config = conf::Config::new();
+    if let Some(secret) = select_secret(&mut config) {
         let action = select_action(&config, &secret);
         match action {
             Action::PrintField(x) => wtype::wtype(secret.get(&x)),
@@ -46,11 +46,12 @@ fn select_action(config: &conf::Config, entry: &pass::PassEntry) -> Action {
     }
 }
 
-fn select_secret(config: &conf::Config) -> Option<pass::PassEntry> {
+fn select_secret(config: &mut conf::Config) -> Option<pass::PassEntry> {
+    let latest = config.load();
     let pass_store = pass::PassDir::new(config.get_path().clone());
     config
         .ofi_tool
-        .select(pass_store.iter(), config.load())
+        .select(pass_store.iter(), latest)
         .and_then(|x| pass_store.show(&x))
         .and_then(|x| config.save(x.get_name()).ok().and(Some(x)))
 }
