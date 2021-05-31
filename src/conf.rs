@@ -38,7 +38,7 @@ impl Config {
     pub fn load(&self) -> Option<String> {
         if let Some(content) = self.read() {
             let mut lines = content.split('\n');
-            let entry = lines.next().unwrap().clone().to_string();
+            let entry = lines.next().unwrap().to_string();
             return Some(entry);
         }
         None
