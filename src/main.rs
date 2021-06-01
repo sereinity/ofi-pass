@@ -19,7 +19,7 @@ fn main() {
                         pass::EType::Field(x) => wtype::wtype(secret.get(&x)),
                         pass::EType::Tab => {
                             wtype::wtype_key("tab");
-                            thread::sleep(time::Duration::from_millis(12));
+                            thread::sleep(time::Duration::from_millis(50));
                         }
                         pass::EType::Enter => wtype::wtype_key("return"),
                         pass::EType::Space => wtype::wtype_key("space"),
