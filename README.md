@@ -17,6 +17,7 @@ Typing engines:
 - ydotool
 
 | Engine name | Wayland | Xorg | Non US layout |
+| :--         | :--     | :--  | :--           |
 | xdotool     | ✗       | ✓    | ✓             |
 | wtype       | ✓       | ✗    | ✓             |
 | ydotool     | ✓       | ✓    | ✗             |
