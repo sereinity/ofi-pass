@@ -29,8 +29,7 @@ impl Config {
     }
 
     pub fn get_path(&self) -> &PathBuf {
-        &self
-            .store_dirs
+        self.store_dirs
             .first()
             .expect("Should have a default pass store")
     }
