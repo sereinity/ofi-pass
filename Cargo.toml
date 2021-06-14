@@ -3,6 +3,7 @@ name = "ofi-pass"
 version = "0.1.0"
 edition = "2018"
 authors = ["Sereinity <sereinity@online.fr>"]
+license = "AGPL-3.0-or-later"
 description = "A password promptor for pass"
 repository = "https://github.com/sereinity/ofi-pass"
 readme = "README.md"
