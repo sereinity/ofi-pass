@@ -2,6 +2,11 @@
 name = "ofi-pass"
 version = "0.1.0"
 edition = "2018"
+authors = ["Sereinity <sereinity@online.fr>"]
+description = "A password promptor for pass"
+repository = "https://github.com/sereinity/ofi-pass"
+readme = "README.md"
+keywords = ["pass", "wofi", "rofi"]
 
 [dependencies]
 directories = "3.0"
