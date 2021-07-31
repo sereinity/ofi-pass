@@ -19,12 +19,12 @@ fn main() {
                         pass::EType::Field(x) => wtype::wtype(secret.get(&x)),
                         pass::EType::Tab => {
                             wtype::wtype_key("tab");
-                            thread::sleep(time::Duration::from_millis(250));
+                            thread::sleep(time::Duration::from_millis(500));
                         }
                         pass::EType::Enter => wtype::wtype_key("return"),
                         pass::EType::Space => wtype::wtype_key("space"),
                         pass::EType::Path => wtype::wtype(secret.get_name()),
-                        pass::EType::Delay => thread::sleep(time::Duration::from_millis(200)),
+                        pass::EType::Delay => thread::sleep(time::Duration::from_millis(500)),
                         pass::EType::Otp => todo!(),
                     }
                 }
