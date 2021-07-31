@@ -1,6 +1,6 @@
 [package]
 name = "ofi-pass"
-version = "0.2.1"
+version = "0.3.0"
 edition = "2018"
 authors = ["Sereinity <sereinity@online.fr>"]
 license = "AGPL-3.0-or-later"
@@ -8,6 +8,9 @@ description = "A password promptor for pass"
 repository = "https://github.com/sereinity/ofi-pass"
 readme = "README.md"
 keywords = ["pass", "wofi", "rofi"]
+exclude = [
+  ".github/*",
+]
 
 [dependencies]
 directories = "3.0"
