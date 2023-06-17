@@ -13,9 +13,9 @@ exclude = [
 ]
 
 [dependencies]
-directories = "3.0"
-walkdir = "2"
+directories = "5.0"
+walkdir = "2.3"
 log = "0.4"
 
 [dev-dependencies]
-mocktopus = "0.7.0"
+mocktopus = "0.8.0"
