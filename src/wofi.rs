@@ -7,9 +7,9 @@ where
     T: AsRef<str>,
 {
     let mut cmd = Command::new("wofi");
-    cmd.args(&["--dmenu", "--prompt", ">"]);
+    cmd.args(["--dmenu", "--prompt", ">"]);
     if let Some(entry) = default {
-        cmd.args(&["--search", entry.as_ref()]);
+        cmd.args(["--search", entry.as_ref()]);
     }
     let child = cmd
         .stdin(Stdio::piped())

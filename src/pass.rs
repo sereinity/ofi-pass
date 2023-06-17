@@ -46,7 +46,7 @@ impl PassEntry {
     pub fn from_pass(entry_name: &str) -> Option<Self> {
         let mut entry = Self::new(entry_name.to_string());
         let output = Command::new("pass")
-            .args(&["show", entry_name])
+            .args(["show", entry_name])
             .output()
             .expect("fail to exec pass");
         if !output.status.success() {

@@ -7,9 +7,9 @@ where
     T: AsRef<str>,
 {
     let mut cmd = Command::new("rofi");
-    cmd.args(&["-dmenu", "-i", "-p", ">"]);
+    cmd.args(["-dmenu", "-i", "-p", ">"]);
     if let Some(entry) = default {
-        cmd.args(&["-select", entry.as_ref()]);
+        cmd.args(["-select", entry.as_ref()]);
     }
     let child = cmd
         .stdin(Stdio::piped())
