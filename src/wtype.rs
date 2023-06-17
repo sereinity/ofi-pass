@@ -2,14 +2,14 @@ use std::process::Command;
 
 pub fn wtype(text: &str) {
     Command::new("wtype")
-        .args(&[text])
+        .args([text])
         .status()
         .expect("Failed to call wtype");
 }
 
 pub fn wtype_key(keyname: &str) {
     Command::new("wtype")
-        .args(&["-k", keyname])
+        .args(["-k", keyname])
         .status()
         .expect("Failed to call wtype");
 }
