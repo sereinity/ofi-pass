@@ -1,4 +1,3 @@
-extern crate directories;
 use std::{thread, time};
 
 mod conf;
