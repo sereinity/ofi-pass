@@ -38,7 +38,7 @@ fn select_action(config: &conf::Config, entry: &pass::PassEntry) -> Action {
     let fields = entry.list_fields();
     match config.ofi_tool.select(fields, None) {
         Some(x) => match Some(x.as_str()) {
-            Some("autotype") => Action::Autotype,
+            Some(":autotype") => Action::Autotype,
             Some(_) => Action::PrintField(x),
             _ => Action::Nothing,
         },

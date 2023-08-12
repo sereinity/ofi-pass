@@ -35,7 +35,7 @@ pub struct PassEntry {
 impl PassEntry {
     fn new(name: String) -> Self {
         let mut values = HashMap::new();
-        values.insert("autotype".to_string(), "user :tab pass".to_string());
+        values.insert(":autotype".to_string(), "user :tab pass".to_string());
         values.insert(
             "user".to_string(),
             var("USER").expect("Couldn't get OS username"),
@@ -75,7 +75,7 @@ impl PassEntry {
 
     pub fn autoseq(&self) -> Vec<EType> {
         let mut seq = vec![];
-        for word in self.get("autotype").split_whitespace() {
+        for word in self.get(":autotype").split_whitespace() {
             seq.push(match Some(word) {
                 Some(":tab") => EType::Tab,
                 Some(":enter") => EType::Enter,
@@ -107,6 +107,9 @@ fn parse_entry_string(content: &str, entry: &mut PassEntry) {
         .insert("pass".to_string(), lines.next().unwrap());
     for extra in lines {
         match extra.split_once(": ") {
+            Some(("autotype", value)) => entry
+                .values
+                .insert(":autotype".to_string(), value.to_string()),
             Some((label, value)) => entry.values.insert(label.to_string(), value.to_string()),
             None => {
                 info!("Parsing a non splittable line '{}'", extra);
@@ -149,7 +152,7 @@ mod tests {
         parse_entry_string("", &mut entry);
         assert_eq!(entry.name, "My entry");
         assert_eq!(entry.values.keys().len(), 3);
-        assert_eq!(entry.values["autotype"], "user :tab pass");
+        assert_eq!(entry.values[":autotype"], "user :tab pass");
         assert_eq!(entry.values["pass"], "");
         assert_ne!(entry.values["user"], "");
     }
@@ -188,7 +191,7 @@ mod tests {
             &mut entry,
         );
         assert_eq!(entry.values.keys().len(), 4);
-        assert_eq!(entry.values["autotype"], "user :enter pass");
+        assert_eq!(entry.values[":autotype"], "user :enter pass");
         assert_eq!(entry.values["pass"], "my: password");
         assert_eq!(entry.values["user"], "foo");
         assert_eq!(entry.values["custom"], "bar");
