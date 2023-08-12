@@ -7,6 +7,7 @@ mod wofi;
 mod wtype;
 
 fn main() {
+    stderrlog::new().module(module_path!()).init().unwrap();
     let config = conf::Config::new();
     if let Some(secret) = select_secret(&config) {
         let action = select_action(&config, &secret);
