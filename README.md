@@ -25,7 +25,7 @@ Typing engines:
 
 ## TODOs
 
-- Handle :otp
+- Handle `otp_method` (`otpauth://…` is implemented)
 - Handle multi-line password
 - Handle `#FILE=` an entryname to `pass show`
 - Add multi-store (seams only possible via rofi to switch between stores)
@@ -37,4 +37,4 @@ Typing engines:
 ## OTP spec
 
 A magic field `otp_method` defines a command line to run, ofi should type the result.
-If no `otp_method` but the password starts with `otpauth://` it should call `pass-otp`
+If no `otp_method` but an entry starts with `otpauth://` it should call `pass-otp`

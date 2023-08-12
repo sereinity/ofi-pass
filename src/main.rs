@@ -25,10 +25,11 @@ fn main() {
                         pass::EType::Space => wtype::wtype_key("space"),
                         pass::EType::Path => wtype::wtype(secret.get_name()),
                         pass::EType::Delay => thread::sleep(time::Duration::from_millis(500)),
-                        pass::EType::Otp => todo!(),
+                        pass::EType::Otp => wtype::wtype(&secret.gen_otp()),
                     }
                 }
             }
+            Action::PrintOtp => wtype::wtype(&secret.gen_otp()),
             _ => {}
         }
     }
@@ -39,6 +40,7 @@ fn select_action(config: &conf::Config, entry: &pass::PassEntry) -> Action {
     match config.ofi_tool.select(fields, None) {
         Some(x) => match Some(x.as_str()) {
             Some(":autotype") => Action::Autotype,
+            Some(":otp") => Action::PrintOtp,
             Some(_) => Action::PrintField(x),
             _ => Action::Nothing,
         },
@@ -71,5 +73,6 @@ impl conf::OfiTool {
 enum Action {
     Autotype,
     PrintField(String),
+    PrintOtp,
     Nothing,
 }
