@@ -125,6 +125,9 @@ fn parse_entry_string(content: &str, entry: &mut PassEntry) {
             Some(("autotype", value)) => entry
                 .values
                 .insert(":autotype".to_string(), value.to_string()),
+            Some(("otp_method", value)) => {
+                entry.values.insert(":otp".to_string(), value.to_string())
+            }
             Some((label, value)) => entry.values.insert(label.to_string(), value.to_string()),
             None => {
                 if extra.starts_with("otpauth://") {
@@ -253,16 +256,16 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "not yet implemented"]
     fn otp_command() {
         let mut entry = PassEntry::new("My entry".to_string());
         parse_entry_string(
-            "otpauth://my_url\n\
+            "mypass\n\
             otp_method: my command",
             &mut entry,
         );
         assert_eq!(entry.values.keys().len(), 4);
-        todo!("test entry.pass() will execute 'my command'");
+        assert_eq!(entry.values["pass"], "mypass");
+        assert_eq!(entry.values[":otp"], "my command");
     }
 
     #[test]

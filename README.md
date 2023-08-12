@@ -25,7 +25,6 @@ Typing engines:
 
 ## TODOs
 
-- Handle `otp_method` (`otpauth://…` is implemented)
 - Handle multi-line password
 - Handle `#FILE=` an entryname to `pass show`
 - Add multi-store (seams only possible via rofi to switch between stores)
