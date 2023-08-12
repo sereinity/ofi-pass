@@ -1,4 +1,4 @@
-use log::info;
+use log::{error, info};
 use std::collections::HashMap;
 use std::env::var;
 use std::path::{Path, PathBuf};
@@ -35,7 +35,7 @@ pub struct PassEntry {
 impl PassEntry {
     fn new(name: String) -> Self {
         let mut values = HashMap::new();
-        values.insert("autotype".to_string(), "user :tab pass".to_string());
+        values.insert(":autotype".to_string(), "user :tab pass".to_string());
         values.insert(
             "user".to_string(),
             var("USER").expect("Couldn't get OS username"),
@@ -73,9 +73,24 @@ impl PassEntry {
         &self.name
     }
 
+    pub fn gen_otp(&self) -> String {
+        let output = Command::new("sh")
+            .args(["-c", &self.values[":otp"]])
+            .output()
+            .expect("fail to exec pass-otp");
+        if !output.status.success() {
+            error!("Cannot run pass-otp");
+            return "".to_string();
+        }
+        std::str::from_utf8(&output.stdout)
+            .unwrap()
+            .trim_end()
+            .to_string()
+    }
+
     pub fn autoseq(&self) -> Vec<EType> {
         let mut seq = vec![];
-        for word in self.get("autotype").split_whitespace() {
+        for word in self.get(":autotype").split_whitespace() {
             seq.push(match Some(word) {
                 Some(":tab") => EType::Tab,
                 Some(":enter") => EType::Enter,
@@ -107,10 +122,22 @@ fn parse_entry_string(content: &str, entry: &mut PassEntry) {
         .insert("pass".to_string(), lines.next().unwrap());
     for extra in lines {
         match extra.split_once(": ") {
+            Some(("autotype", value)) => entry
+                .values
+                .insert(":autotype".to_string(), value.to_string()),
+            Some(("otp_method", value)) => {
+                entry.values.insert(":otp".to_string(), value.to_string())
+            }
             Some((label, value)) => entry.values.insert(label.to_string(), value.to_string()),
             None => {
-                info!("Parsing a non splittable line '{}'", extra);
-                continue;
+                if extra.starts_with("otpauth://") {
+                    let mut cmd = "pass otp ".to_string();
+                    cmd.push_str(&entry.name);
+                    entry.values.insert(":otp".to_string(), cmd)
+                } else {
+                    info!("Parsing a non splittable line '{}'", extra);
+                    continue;
+                }
             }
         };
     }
@@ -149,7 +176,7 @@ mod tests {
         parse_entry_string("", &mut entry);
         assert_eq!(entry.name, "My entry");
         assert_eq!(entry.values.keys().len(), 3);
-        assert_eq!(entry.values["autotype"], "user :tab pass");
+        assert_eq!(entry.values[":autotype"], "user :tab pass");
         assert_eq!(entry.values["pass"], "");
         assert_ne!(entry.values["user"], "");
     }
@@ -160,6 +187,7 @@ mod tests {
         parse_entry_string("my: password", &mut entry);
         assert_eq!(entry.values.keys().len(), 3);
         assert_eq!(entry.values["pass"], "my: password");
+        assert_eq!(entry.values.get(":otp"), None);
     }
 
     #[test]
@@ -179,18 +207,20 @@ mod tests {
 
     #[test]
     fn full_file() {
-        let mut entry = PassEntry::new("My entry".to_string());
+        let mut entry = PassEntry::new("myEntry".to_string());
         parse_entry_string(
             "my: password\n\
             autotype: user :enter pass\n\
             user: foo\n\
+            otpauth://topt/my?secret=foo&bar=baz\n\
             custom: bar",
             &mut entry,
         );
-        assert_eq!(entry.values.keys().len(), 4);
-        assert_eq!(entry.values["autotype"], "user :enter pass");
+        assert_eq!(entry.values.keys().len(), 5);
+        assert_eq!(entry.values[":autotype"], "user :enter pass");
         assert_eq!(entry.values["pass"], "my: password");
         assert_eq!(entry.values["user"], "foo");
+        assert_eq!(entry.values[":otp"], "pass otp myEntry");
         assert_eq!(entry.values["custom"], "bar");
     }
 
@@ -226,25 +256,28 @@ mod tests {
     }
 
     #[test]
-    #[ignore = "not yet implemented"]
     fn otp_command() {
         let mut entry = PassEntry::new("My entry".to_string());
         parse_entry_string(
-            "otpauth://my_url\n\
+            "mypass\n\
             otp_method: my command",
             &mut entry,
         );
         assert_eq!(entry.values.keys().len(), 4);
-        todo!("test entry.pass() will execute 'my command'");
+        assert_eq!(entry.values["pass"], "mypass");
+        assert_eq!(entry.values[":otp"], "my command");
     }
 
     #[test]
-    #[ignore = "not yet implemented"]
     fn pass_otp() {
-        let mut entry = PassEntry::new("My entry".to_string());
-        parse_entry_string("otpauth://my_url", &mut entry);
-        assert_eq!(entry.values.keys().len(), 3);
-        assert_eq!(entry.values["pass"], "otpauth://my_url");
-        todo!("test entry.pass() will execute 'pass otp $entry_name'");
+        let mut entry = PassEntry::new("MyEntry".to_string());
+        parse_entry_string(
+            "mypass\n\
+            otpauth://topt/my?secret=foo&bar=baz\n",
+            &mut entry,
+        );
+        assert_eq!(entry.values.keys().len(), 4);
+        assert_eq!(entry.values["pass"], "mypass");
+        assert_eq!(entry.values[":otp"], "pass otp MyEntry");
     }
 }
