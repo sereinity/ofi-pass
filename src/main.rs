@@ -1,6 +1,7 @@
 use std::{thread, time};
 
 mod conf;
+mod fuzzel;
 mod pass;
 mod rofi;
 mod wofi;
@@ -66,6 +67,7 @@ impl conf::OfiTool {
         match self {
             conf::OfiTool::Wofi => wofi::select(input, default),
             conf::OfiTool::Rofi => rofi::select(input, default),
+            conf::OfiTool::Fuzzel => fuzzel::select(input, default),
         }
     }
 }

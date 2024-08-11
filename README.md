@@ -8,6 +8,7 @@ This project is inspired by [rofi-pass](https://github.com/carnager/rofi-pass) a
 ## Engines
 
 Current prompt engines are:
+- fuzzel (probably future default)
 - rofi (default, configurable via `OFI_TOOL` variable)
 - wofi
 
