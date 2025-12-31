@@ -14,7 +14,7 @@ exclude = [
 
 [dependencies]
 directories = "5.0"
-walkdir = "2.3"
+walkdir = "2.5"
 log = "0.4"
 stderrlog = "0.5"
 
